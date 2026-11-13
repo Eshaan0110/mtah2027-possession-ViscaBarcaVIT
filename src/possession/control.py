@@ -4,7 +4,7 @@ import numpy as np
 R_CONTROL = 1.5      # m: a player this close to the ball is a candidate controller
 MERGE_GAP = 5        # frames: tracking dropouts shorter than this do not break a contact
 MIN_TOUCH = 3        # frames: shortest contact that counts as a touch
-MIN_CONTROL = 25     # frames (1 s): one team's player stays close -> control
+MIN_CONTROL = 12     # frames (0.5 s): one team close to the ball -> control. Chosen on external Metrica games (25 -> 12: spellF1 .456 -> .485)
 PASS_GAP = 75        # frames (3 s): two touches by one team this close together -> control
 
 
@@ -30,9 +30,9 @@ def _runs(mask, gap):
     return list(zip(starts.tolist(), (ends + 1).tolist()))
 
 
-def control_events(dist, who, r=R_CONTROL):
+def control_events(dist, who, r=None):
     """[(start, stop, team)] control events, start backdated to the first touch of the stretch."""
-    near = dist <= r
+    near = dist <= (R_CONTROL if r is None else r)
     touches = []
     for team in (0, 1):
         for a, b in _runs(near & (who == team), MERGE_GAP):

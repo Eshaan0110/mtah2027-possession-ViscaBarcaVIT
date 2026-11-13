@@ -16,8 +16,10 @@ MIN_DEAD = 50         # frames (2 s)
 NEG = -1e18
 
 
-def decode(team_ev, L, min_alive=MIN_ALIVE, min_dead=MIN_DEAD):
+def decode(team_ev, L, min_alive=None, min_dead=None):
     """team_ev: int8 (-1/0/1), L: dead log-likelihood ratio. Returns int8 states 0/1/2."""
+    min_alive = MIN_ALIVE if min_alive is None else min_alive
+    min_dead = MIN_DEAD if min_dead is None else min_dead
     n = len(L)
     m = (min_alive, min_alive, min_dead)
     M = max(m)

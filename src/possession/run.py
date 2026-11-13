@@ -9,43 +9,28 @@ import sys
 
 import numpy as np
 
-from . import ball as ballmod
-from . import control, deadball, decoder, loader
+from . import loader, pipeline
 
 ROOT = loader.ROOT
 sys.path.insert(0, ROOT)
-from games import half_video_blocks, GAME, GAMES  # noqa: E402
+from games import half_video_blocks, GAME  # noqa: E402
 from starter import load_smart_tagging  # noqa: E402
 
-LETTERS = np.array(["H", "A", "D"])
 PRE_KICKOFF_DEAD = (110808, 113741)  # graded, all D: FAQ.md (second half is graded before kick-off)
 
 
 def build_labels():
     arrays = loader.load()
     team = loader.team_of_slot()
-    n = len(arrays["bx"])
-    ball = ballmod.reconstruct(arrays["bx"], arrays["by"])
-    dist, who = control.nearest_team(arrays, team, ball)
-    events, touches = control.control_events(dist, who)
-    team_ev = control.evidence(events, n)
     tags = load_smart_tagging.load()
-    L, restarts = deadball.dead_evidence(arrays, ball, team_ev, tags)
-
-    labels = np.full(n, "X", dtype="<U1")
     halves = half_video_blocks(GAME)
-    for half, first, last in halves:
-        a = first if half == 1 else PRE_KICKOFF_DEAD[1] + 1
-        b = last + 1
-        states = decoder.decode(team_ev[a:b], L[a:b])
-        labels[a:b] = LETTERS[states]
-    labels[PRE_KICKOFF_DEAD[0]:PRE_KICKOFF_DEAD[1] + 1] = "D"
-
-    graded = np.zeros(n, bool)
+    blocks = [(f, l, f if h == 1 else PRE_KICKOFF_DEAD[1] + 1) for h, f, l in halves]
+    labels, info = pipeline.predict(arrays, team, tags, blocks, forced_dead=[PRE_KICKOFF_DEAD])
+    graded = np.zeros(len(labels), bool)
     for _, first, last in halves:
         graded[first:last + 1] = True
     print("ball known %.1f%% of graded | touches %d | control events %d | restarts %d"
-          % (100 * ball["known"][graded].mean(), len(touches), len(events), len(restarts)))
+          % (100 * info["known"][graded].mean(), info["touches"], info["events"], info["restarts"]))
     return labels, graded
 
 
@@ -57,8 +42,7 @@ def summarize(labels, graded):
     for _, first, last in half_video_blocks(GAME):
         seg = labels[first:last + 1]
         alive = np.isin(seg, ["H", "A"])
-        starts = alive & ~np.r_[False, alive[:-1] & (seg[1:] == seg[:-1])]
-        n_poss += int(starts.sum())
+        n_poss += int((alive & ~np.r_[False, alive[:-1] & (seg[1:] == seg[:-1])]).sum())
     print("possessions %d, mean duration %.1f s" % (n_poss, np.isin(g, ["H", "A"]).sum() / 25 / max(n_poss, 1)))
 
 
