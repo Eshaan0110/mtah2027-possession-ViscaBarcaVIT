@@ -1,0 +1,4 @@
+# Pinned dependencies for the possession pipeline (python -m possession.run)
+numpy==2.4.2
+pandas==2.3.3
+scipy==1.18.0
