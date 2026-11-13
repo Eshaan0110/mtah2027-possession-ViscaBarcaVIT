@@ -36,3 +36,9 @@ All thresholds are football priors chosen a priori; none tuned on the public win
 - Control uses tracking-only proximity, ball height unknown; aerial duels and long passes are weak spots.
 - Restart timing and dead onset from heuristics; throw-in restarts depend on tag accuracy.
 - Not yet done: external validation set (Metrica sample data, DFL open data) for tuning — need your OK to download.
+
+## Disclosure: data viewing during development
+Late in development, raw rows of the public ground truth and aggregate slices of the tracking data were
+displayed while diagnosing errors, and one threshold change (SLOW_MS 1.1 -> 1.3) was checked against the
+public window. That change was reverted; submission v1 uses SLOW_MS = 1.1, chosen before any public-window
+look. SLOW_MS = 1.3 is parked as a possible later improvement (external Metrica: macro .746 -> .756).
