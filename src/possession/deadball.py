@@ -13,7 +13,7 @@ OOB_MARGIN = 0.3        # m beyond the line before the ball counts as out
 MOVING = 2.0            # m/s: ball faster than this inside the pitch is live-play evidence
 STILL = 0.7             # m/s
 MAX_LOOKBACK = 90 * 25  # frames: how far back from a restart the dead stretch may begin
-SLOW_MS = 1.3           # m/s (ATD speeds are m/s, per DATA.md): walking pace, ~4 km/h
+SLOW_MS = 1.1           # m/s (ATD speeds are m/s, per DATA.md): walking pace, ~4 km/h
 RESTART_SPEED = 4.0     # m/s: the ball leaves the spot faster than this at a restart
 W_SET, W_OOB, W_SLOW, W_LIVE = 4.0, 3.0, 1.0, 1.5
 

@@ -36,5 +36,3 @@ All thresholds are football priors chosen a priori; none tuned on the public win
 - Control uses tracking-only proximity, ball height unknown; aerial duels and long passes are weak spots.
 - Restart timing and dead onset from heuristics; throw-in restarts depend on tag accuracy.
 - Not yet done: external validation set (Metrica sample data, DFL open data) for tuning — need your OK to download.
-
-- SLOW_MS 1.1 -> 1.3 (walking-pace threshold; smoothed median player speed is ~2.2 in live play and ~1.0-1.2 in stoppages). External Metrica mean macro .746->.756, spell .485->.486; public macro .708->.744, spell .457->.456.
