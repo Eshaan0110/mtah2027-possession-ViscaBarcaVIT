@@ -57,6 +57,15 @@ def load(game=GAME, data_dir=None, use_cache=True):
     return arrays
 
 
+def team_of_slot(game=GAME, data_dir=None):
+    """0 = home, 1 = away per track slot, parsed from the ATD metadata XML (first team is home)."""
+    import xml.etree.ElementTree as ET
+    meta = require(["atd_meta"], game, data_dir)[0]
+    root = ET.parse(meta).getroot()
+    home = [t.get("id") for t in root.iter("Team")][0]
+    return np.array([0 if p.get("teamId") == home else 1 for p in root.iter("Player")], dtype=np.int8)
+
+
 if __name__ == "__main__":
     a = load()
     n = len(a["bx"])
