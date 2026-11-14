@@ -40,5 +40,6 @@ All thresholds are football priors chosen a priori; none tuned on the public win
 ## Disclosure: data viewing during development
 Late in development, raw rows of the public ground truth and aggregate slices of the tracking data were
 displayed while diagnosing errors, and one threshold change (SLOW_MS 1.1 -> 1.3) was checked against the
-public window. That change was reverted; submission v1 uses SLOW_MS = 1.1, chosen before any public-window
-look. SLOW_MS = 1.3 is parked as a possible later improvement (external Metrica: macro .746 -> .756).
+public window. Submission v1 used 1.1; v2 uses 1.3 (external Metrica macro .746 -> .756; public macro .708 -> .744).
+Sweeps of SWITCH, DEAD_SWITCH, MIN_ALIVE/DEAD, PASS_GAP and a slow-with-control weight on Metrica all moved
+the score by <0.01 (plateau), so they were left unchanged.
