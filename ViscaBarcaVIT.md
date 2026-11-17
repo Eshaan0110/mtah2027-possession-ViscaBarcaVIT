@@ -1,6 +1,6 @@
 # ViscaBarcaVIT: ball possession from tactical tracking (FC Barcelona vs Athletic Club)
 
-Team: ViscaBarcaVIT. Phase 1, submission v2.
+Team: ViscaBarcaVIT. Phase 1, submission v1.
 
 ## 1. Summary
 
@@ -52,7 +52,7 @@ treated as evidence of anything.
 ### 3.3 Dead-ball evidence
 Each frame gets a log-likelihood ratio L that the ball is dead:
 - ball outside the pitch lines (strong),
-- collective slowdown: median player speed below 1.3 m/s (walking pace; in this match live play sits near 2.2 m/s and stoppages near 1.0-1.2 m/s),
+- collective slowdown: median player speed below 1.1 m/s (walking pace),
 - ball still while players are slow,
 - live-play evidence (ball moving above 2 m/s inside the pitch, or a control event) pushes towards alive,
 - Smart Tagging `SET PIECES` windows give a restart frame (first frame with ball speed above 4 m/s in the
@@ -77,10 +77,10 @@ separately.
 - **No tuning on the public window.** The 5-minute public ground truth was used for correctness checks, and
   all constants were set a priori from football priors. One bug was fixed from the units (a speed threshold
   written for km/h applied to m/s data), not from the score.
-- Public window, final v2: macro F1 .744, spell F1 .456 (19 predicted possessions vs 17), against
+- Public window, final: macro F1 .708, spell F1 .457 (18 predicted possessions vs 17), against
   `baseline_smooth50` .621 / .326. With 17 possessions the noise is about 0.04, so this cannot rank settings.
 - **External validation** on Metrica games 1-2 with the ball masked about 40% (random gaps, mean 50 frames,
-  two seeds): macro F1 .756, spell F1 .486. Labels there are derived from events (alive team = team of the
+  two seeds): macro F1 .746, spell F1 .485. Labels there are derived from events (alive team = team of the
   latest pass/shot/recovery/set piece; dead from ball-out/foul/goal until the next set piece), so they are
   approximate. The sweep there chose the 12-frame control minimum (25 to 12 frames raised spell F1 .456 to .485).
 - Baselines regenerate byte-identical to the shipped ones; the submission is deterministic (identical file
@@ -100,10 +100,9 @@ separately.
   LLM coding assistant's conversation by an @-mention, and raw rows of the public ground truth and aggregate
   slices of the tracking data were later displayed to it during error analysis. The pipeline itself reads
   the data only through code. No values were hard-coded from those views.
-- The collective-slowdown threshold (1.1 to 1.3 m/s, v1 to v2) was chosen after the public-window errors
-  were inspected; it is also supported independently by the external Metrica games (macro F1 .746 to
-  .756) and by the speed distribution of this match. Its effect on the public window (macro .708 to .744)
-  is therefore not an untouched estimate. All other constants were set a priori.
+- The collective-slowdown threshold was kept at its a-priori walking-pace value (1.1 m/s). A higher value
+  (1.3 m/s) looked slightly better after the public-window errors were inspected, so it was **not** used,
+  to keep the submission free of tuning on the public window. All constants were set a priori.
 - An LLM coding assistant was used to write and debug the code.
 
 ## 8. Reproduction
